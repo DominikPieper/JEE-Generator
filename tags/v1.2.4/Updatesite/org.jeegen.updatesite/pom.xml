@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<relativePath>../org.jeegen.releng/pom.xml</relativePath>
+		<groupId>org.jeegen</groupId>
+		<artifactId>releng</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<name>JEE  DSL Update Site</name>
+	<version>1.0.0</version>
+	<groupId>org.jeegen</groupId>
+	<artifactId>updatesite</artifactId>
+	<packaging>eclipse-repository</packaging>
+
+	<properties>
+		<target.update.site>target/repository</target.update.site>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<includeAllDependencies>false</includeAllDependencies>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-p2-extras-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>append</id>
+						<phase>package</phase>
+						<goals>
+							<goal>mirror</goal>
+						</goals>
+						<configuration>
+							<source>
+								<repository>
+									<url>${source.update.site}</url>
+									<layout>p2</layout>
+								</repository>
+							</source>
+							<destination>${target.update.site}</destination>
+							<compress>true</compress>
+							<append>true</append>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jboss.tools.tycho-plugins</groupId>
+				<artifactId>repository-utils</artifactId>
+				<version>0.22.0</version>
+				<executions>
+					<execution>
+						<id>generate-facade</id>
+						<phase>package</phase>
+						<goals>
+							<goal>generate-repository-facade</goal>
+						</goals>
+						<configuration>
+							<siteTemplateFolder>templates</siteTemplateFolder>
+							<!-- Symbols are used while expanding index.html template -->
+							<symbols>
+								<update.site.name>JEE Generators Repository</update.site.name>
+								<update.site.description>This URL can be used inside eclipse for
+									installing new software.</update.site.description>
+								<update.site.version>${project.version}</update.site.version>
+								<target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
+							</symbols>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
